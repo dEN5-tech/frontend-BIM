@@ -1,0 +1,19 @@
+Controller {/}: +19ms
+[Nest] 16236  - 09.05.2024, 18:37:40     LOG [RouterExplorer] Mapped {/message, POST} route +10ms
+[Nest] 16236  - 09.05.2024, 18:37:40     LOG [RouterExplorer] Mapped {/message/:id, GET} route +5ms
+[Nest] 16236  - 09.05.2024, 18:37:40     LOG [RoutesResolver] UserController {/user}: +1ms
+[Nest] 16236  - 09.05.2024, 18:37:40     LOG [RouterExplorer] Mapped {/user, POST} route +6ms
+[Nest] 16236  - 09.05.2024, 18:37:40     LOG [RouterExplorer] Mapped {/user/search, GET} route +2ms
+[Nest] 16236  - 09.05.2024, 18:37:40     LOG [RouterExplorer] Mapped {/user/:id, PUT} route +4ms
+[Nest] 16236  - 09.05.2024, 18:37:40     LOG [RouterExplorer] Mapped {/user/:id, DELETE} route +2ms
+[Nest] 16236  - 09.05.2024, 18:37:40     LOG [RoutesResolver] FilesController {/files}: +2ms
+[Nest] 16236  - 09.05.2024, 18:37:40     LOG [RouterExplorer] Mapped {/files/upload, POST} route +2ms
+[Nest] 16236  - 09.05.2024, 18:37:40     LOG [RouterExplorer] Mapped {/files/:id, GET} route +5ms
+[Nest] 16236  - 09.05.2024, 18:37:40     LOG [RouterExplorer] Mapped {/files/:id, PUT} route +3ms
+[Nest] 16236  - 09.05.2024, 18:37:40     LOG [RouterExplorer] Mapped {/files/:id, DELETE} route +4ms
+[Nest] 16236  - 09.05.2024, 18:37:40     LOG [RoutesResolver] UserController {/user}: +1ms
+[Nest] 16236  - 09.05.2024, 18:37:40     LOG [RouterExplorer] Mapped {/user, POST} route +3ms
+[Nest] 16236  - 09.05.2024, 18:37:40     LOG [RouterExplorer] Mapped {/user/search, GET} route +3ms
+[Nest] 16236  - 09.05.2024, 18:37:40     LOG [RouterExplorer] Mapped {/user/:id, PUT} route +3ms
+[Nest] 16236  - 09.05.2024, 18:37:40     LOG [RouterExplorer] Mapped {/user/:id, DELETE} route +2ms
+[Nest] 16236  - 09.05.2024, 18:37:45     LOG [NestApplication] Nest application successfully started +4591ms
