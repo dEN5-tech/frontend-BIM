@@ -18,12 +18,12 @@ const ListUserItem: React.FC<ListUserItemProps> = React.memo(
     const isSelected = selectedUser ? selectedUser.id === user.id : false;
     // Utilizing theme colors for better theme consistency
     const backgroundColor = useColorModeValue(
-      isSelected ? "brand.darkSkyBlue" : "brand.skyBlue", 
-      isSelected ? "brand.darkBlack" : "brand.darkSkyBlue"
+      isSelected ? "brand.darkSkyBlue" : "brand.skyBlue",
+      isSelected ? "brand.darkBlack" : "brand.darkSkyBlue",
     );
     const textColor = useColorModeValue(
-      isSelected ? "brand.white" : "brand.black", 
-      isSelected ? "brand.darkWhite" : "brand.darkBlack"
+      isSelected ? "brand.white" : "brand.black",
+      isSelected ? "brand.darkWhite" : "brand.darkBlack",
     );
 
     return (
@@ -36,11 +36,13 @@ const ListUserItem: React.FC<ListUserItemProps> = React.memo(
         rounded="md"
         bg={backgroundColor}
       >
-        <Avatar src={user.avatar} />
-        <Text
-          fontWeight={isSelected ? "bold" : "normal"}
-          color={textColor}
-        >
+        <Avatar
+          showBorder={true}
+          borderColor={"green"}
+          borderWidth={"2px"}
+          src={user.avatar}
+        />
+        <Text fontWeight={isSelected ? "bold" : "normal"} color={textColor}>
           {user.name}
         </Text>
       </HStack>
