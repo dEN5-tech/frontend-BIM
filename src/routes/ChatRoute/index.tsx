@@ -1,14 +1,9 @@
-import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import  { useState, useEffect, useCallback, useRef } from 'react';
 import {
     Box,
     Flex,
-    Text,
-    Avatar,
-    Input,
     Button,
     VStack,
-    HStack,
-    IconButton,
     Modal,
     ModalOverlay,
     ModalContent,
@@ -25,9 +20,8 @@ import {
 import SearchInput from '../../components/SearchInput';
 import ListUserItem from '../../components/ListUserItem';
 import FileUploadBox from '../../components/FileUploadBox';
-import { AttachmentIcon } from '@chakra-ui/icons';
 import axiosInstance from '../../requests/axios';
-import { Message, User } from '../../types';
+import { User } from '../../types';
 import ChatContainer from '../../components/ChatContainer';
 
 const ChatRoute = () => {
@@ -87,9 +81,9 @@ const ChatRoute = () => {
                         {filteredUsers.map((user) => (
                             <ListUserItem
                                 key={user.id.toString()}
-                                setSelectedUser={setSelectedUser}
-                                selectedUser={selectedUser}
-                                user={user}
+                                setSelectedUser={() => setSelectedUser(user)}
+                                selectedUser={selectedUser ? {...selectedUser, id: selectedUser.id.toString()} : null}
+                                user={{ ...user, id: user.id.toString() }}
                             />
                         ))}
                     </VStack>

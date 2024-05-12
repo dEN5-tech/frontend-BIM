@@ -9,7 +9,7 @@ type User = {
 
 type ListUserItemProps = {
   user: User;
-  selectedUser: User | undefined;
+  selectedUser: User | null; // Changed from User | undefined to User | null
   setSelectedUser: (user: User) => void;
 };
 

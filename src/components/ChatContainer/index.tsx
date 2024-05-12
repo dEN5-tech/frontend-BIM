@@ -3,12 +3,19 @@ import { Flex, HStack, VStack, Text, Avatar, IconButton, Input, Button, useColor
 import { User, DTOAxiosResponse, MessageDTO } from '../../types';
 import { useEffect, useState, useRef, useCallback } from 'react';
 import axiosInstance from '../../requests/axios';
+import { useSelector } from 'react-redux';
+import {RootState} from "../../store"
 
 const ChatContainer = ({ selectedUser, onOpen }: { selectedUser: User | null, onOpen: () => void }) => {
     const bgChat = useColorModeValue("white", "gray.800");
-    const bgInput = useColorModeValue("mintGreen", "darkMintGreen");
-    const textColor = useColorModeValue("black", "white");
-    const bgSidebar = useColorModeValue("lavender", "darkLavender");
+    const bgChatSender = useColorModeValue("brand.skyBlue", "brand.darkSkyBlue");
+    const bgChatReceiver = useColorModeValue("brand.mintGreen", "brand.darkMintGreen");
+
+    const bgInput = useColorModeValue("brand.mintGreen", "brand.darkMintGreen");
+    const textColor = useColorModeValue("brand.black", "brand.darkBlack");
+    const bgSidebar = useColorModeValue("brand.lavender", "brand.darkLavender");
+
+    const loggedInUser = useSelector((state: RootState) => state.user.loggedInUser);
 
     const [messages, setMessages] = useState<MessageDTO[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
@@ -20,7 +27,7 @@ const ChatContainer = ({ selectedUser, onOpen }: { selectedUser: User | null, on
         if (!selectedUser) return;
         setLoading(true);
         try {
-            const response = await axiosInstance.get<DTOAxiosResponse>(`/chats/1/${selectedUser.id}`);
+            const response = await axiosInstance.get<DTOAxiosResponse>(`/chats/${loggedInUser?.id}/${selectedUser.id}`);
             setMessages(response.data.messages || []);
         } catch (error) {
             console.error("Error fetching messages:", error);
@@ -42,8 +49,9 @@ const ChatContainer = ({ selectedUser, onOpen }: { selectedUser: User | null, on
     const sendMessage = async () => {
         if (message.trim() && selectedUser) {
             try {
-                const response = await axiosInstance.post<DTOAxiosResponse>(`/chats/1/messages`, {
-                    userId: selectedUser.id,
+                const response = await axiosInstance.post<DTOAxiosResponse>(`chats/messages`, {
+                    userId: loggedInUser?.id, // Using loggedInUser's ID
+                    receiverId: selectedUser.id,
                     content: message
                 });
                 if (response.data.messages && response.data.messages.length > 0) {
@@ -64,12 +72,13 @@ const ChatContainer = ({ selectedUser, onOpen }: { selectedUser: User | null, on
                     {messages && messages.length > 0 ? messages.map((msg) => (
                         <HStack
                             key={msg.id.toString()}
-                            bg={bgInput}
+                            bg={msg.user.id === loggedInUser?.id ? bgChatSender : bgChatReceiver}
                             rounded="lg"
                             p={4}
                             spacing={4}
                             align="start"
                             className="message-bubble"
+                            justifyContent={"flex-start"}
                         >
                             <Avatar src={msg.user.avatar} />
                             <VStack align="start">
@@ -102,3 +111,4 @@ const ChatContainer = ({ selectedUser, onOpen }: { selectedUser: User | null, on
 }
 
 export default ChatContainer;
+
