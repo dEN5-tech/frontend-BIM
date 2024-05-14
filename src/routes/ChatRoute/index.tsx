@@ -1,4 +1,4 @@
-import  { useState, useEffect, useCallback, useRef } from 'react';
+import  { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import {
     Box,
     Flex,
@@ -58,11 +58,37 @@ const ChatRoute = () => {
             });
 
         if (inputGroupRef.current) {
-            setInputHeight(inputGroupRef.current.clientHeight + 35);
+            setInputHeight(inputGroupRef.current.clientHeight + 32);
         }
     }, []);
 
     const bgSidebar = useColorModeValue("lavender", "darkLavender");
+
+    const modalContent = useMemo(() => (
+        <Modal isOpen={isOpen} onClose={onClose}>
+            <ModalOverlay />
+            <ModalContent>
+                <ModalHeader>Add files</ModalHeader>
+                <ModalCloseButton />
+                <ModalBody>
+                    <FormControl>
+                        <FormLabel>Upload image or document</FormLabel>
+                        <FileUploadBox />
+                    </FormControl>
+                    <FormControl mt={4}>
+                        <FormLabel>Add a comment to the file</FormLabel>
+                        <Textarea placeholder="Enter comment here..." />
+                    </FormControl>
+                </ModalBody>
+                <ModalFooter>
+                    <Button colorScheme="red" mr={3} onClick={onClose}>
+                        Close
+                    </Button>
+                    <Button colorScheme="green">Send</Button>
+                </ModalFooter>
+            </ModalContent>
+        </Modal>
+    ), [isOpen, onClose]);
 
     return (
         <>
@@ -95,31 +121,9 @@ const ChatRoute = () => {
                  />
             </Flex>
 
-            <Modal isOpen={isOpen} onClose={onClose}>
-                <ModalOverlay />
-                <ModalContent>
-                    <ModalHeader>Add files</ModalHeader>
-                    <ModalCloseButton />
-                    <ModalBody>
-                        <FormControl>
-                            <FormLabel>Upload image or document</FormLabel>
-                            <FileUploadBox />
-                        </FormControl>
-                        <FormControl mt={4}>
-                            <FormLabel>Add a comment to the file</FormLabel>
-                            <Textarea placeholder="Enter comment here..." />
-                        </FormControl>
-                    </ModalBody>
-                    <ModalFooter>
-                        <Button colorScheme="red" mr={3} onClick={onClose}>
-                            Close
-                        </Button>
-                        <Button colorScheme="green">Send</Button>
-                    </ModalFooter>
-                </ModalContent>
-            </Modal>
+            {modalContent}
         </>
     );
 };
-
 export default ChatRoute;
+

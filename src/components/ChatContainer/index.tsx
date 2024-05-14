@@ -1,19 +1,18 @@
-import { AttachmentIcon } from '@chakra-ui/icons';
-import { Flex, HStack, VStack, Text, Avatar, IconButton, Input, Button, useColorModeValue, Spinner } from '@chakra-ui/react';
+
+import { Flex, HStack, VStack, Text, Avatar, useColorModeValue, Spinner } from '@chakra-ui/react';
 import { User, DTOAxiosResponse, MessageDTO } from '../../types';
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useEffect, useState, useRef, useCallback, useMemo } from 'react';
 import axiosInstance from '../../requests/axios';
 import { useSelector } from 'react-redux';
 import {RootState} from "../../store"
+import ChatInput from '../ChatInput';
 
 const ChatContainer = ({ selectedUser, onOpen }: { selectedUser: User | null, onOpen: () => void }) => {
     const bgChat = useColorModeValue("white", "gray.800");
     const bgChatSender = useColorModeValue("brand.skyBlue", "brand.darkSkyBlue");
     const bgChatReceiver = useColorModeValue("brand.mintGreen", "brand.darkMintGreen");
 
-    const bgInput = useColorModeValue("brand.mintGreen", "brand.darkMintGreen");
     const textColor = useColorModeValue("brand.black", "brand.darkBlack");
-    const bgSidebar = useColorModeValue("brand.lavender", "brand.darkLavender");
 
     const loggedInUser = useSelector((state: RootState) => state.user.loggedInUser);
 
@@ -34,7 +33,7 @@ const ChatContainer = ({ selectedUser, onOpen }: { selectedUser: User | null, on
         } finally {
             setLoading(false);
         }
-    }, [selectedUser]);
+    }, [selectedUser, loggedInUser?.id]);
 
     useEffect(() => {
         if (selectedUser?.id) {
@@ -49,14 +48,11 @@ const ChatContainer = ({ selectedUser, onOpen }: { selectedUser: User | null, on
     const sendMessage = async () => {
         if (message.trim() && selectedUser) {
             try {
-                const response = await axiosInstance.post<DTOAxiosResponse>(`chats/messages`, {
-                    userId: loggedInUser?.id, // Using loggedInUser's ID
+                await axiosInstance.post<DTOAxiosResponse>(`chats/messages`, {
+                    senderId: loggedInUser?.id,
                     receiverId: selectedUser.id,
                     content: message
                 });
-                if (response.data.messages && response.data.messages.length > 0) {
-                    setMessages(prevMessages => [...prevMessages, response.data.messages[response.data.messages.length - 1]]);
-                }
                 setMessage("");
                 fetchMessages();
             } catch (error) {
@@ -65,47 +61,50 @@ const ChatContainer = ({ selectedUser, onOpen }: { selectedUser: User | null, on
         }
     };
 
+    const messageList = useMemo(() => (
+        messages.length > 0 ? (
+            <VStack spacing={4} align="stretch">
+                {messages.map((msg) => (
+                    <HStack
+                        key={msg.id.toString()}
+                        bg={msg.user.id === loggedInUser?.id ? bgChatSender : bgChatReceiver}
+                        rounded="lg"
+                        p={4}
+                        spacing={4}
+                        align="start"
+                        className="message-bubble"
+                        justifyContent={"flex-start"}
+                    >
+                        <Avatar src={msg.user.avatar} />
+                        <VStack align="start">
+                            <Text fontWeight="bold" color={textColor}>
+                                {msg.user.name}
+                            </Text>
+                            <Text color={textColor}>{msg.content}</Text>
+                        </VStack>
+                    </HStack>
+                ))}
+            </VStack>
+        ) : (
+            <Text>No messages</Text>
+        )
+    ), [messages, loggedInUser, bgChatSender, bgChatReceiver, textColor]);
+
     return (
         <Flex flexDirection="column" flex="1" p={4} bg={bgChat}>
             {loading ? <Spinner alignSelf="center" mt={4} /> : (
                 <VStack spacing={4} align="stretch" flex="1" overflowY="auto">
-                    {messages && messages.length > 0 ? messages.map((msg) => (
-                        <HStack
-                            key={msg.id.toString()}
-                            bg={msg.user.id === loggedInUser?.id ? bgChatSender : bgChatReceiver}
-                            rounded="lg"
-                            p={4}
-                            spacing={4}
-                            align="start"
-                            className="message-bubble"
-                            justifyContent={"flex-start"}
-                        >
-                            <Avatar src={msg.user.avatar} />
-                            <VStack align="start">
-                                <Text fontWeight="bold" color={textColor}>
-                                    {msg.user.name}
-                                </Text>
-                                <Text color={textColor}>{msg.content}</Text>
-                            </VStack>
-                        </HStack>
-                    )) : <Text>No messages</Text>}
+                    {messageList}
                     <div ref={messagesEndRef} />
                 </VStack>
             )}
-
-            <HStack p={4} bg={bgSidebar}>
-                <IconButton
-                    icon={<AttachmentIcon />}
-                    onClick={onOpen}
-                    isRound={true}
-                    bg={bgInput}
-                    aria-label="Attach file"
-                />
-                <Input value={message} onChange={({ target }) => setMessage(target.value)} placeholder="Type your message here..." />
-                <Button onClick={sendMessage} colorScheme="blue" isDisabled={!message.trim() || !selectedUser}>
-                    Send
-                </Button>
-            </HStack>
+            <ChatInput
+                message={message}
+                setMessage={setMessage}
+                sendMessage={sendMessage}
+                selectedUser={selectedUser as User}
+                onOpen={onOpen}
+            />
         </Flex>
     )
 }

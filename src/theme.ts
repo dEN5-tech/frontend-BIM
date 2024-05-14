@@ -30,12 +30,12 @@ const theme = extendTheme({
             _hover: {
               bg: "brand.darkBlack",
               color: "brand.darkPeach",
-            
             },
           },
         },
-      },
-    }
-  });
+      }
+  }
+}
+  );
 
 export default theme;

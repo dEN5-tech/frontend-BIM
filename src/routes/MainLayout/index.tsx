@@ -1,9 +1,12 @@
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { Box, Flex, VStack, Text, Button, useColorModeValue, Menu, MenuButton, Avatar, MenuList, MenuItem, MenuDivider } from "@chakra-ui/react";
 import { IconButton, useColorMode } from "@chakra-ui/react";
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { MoonIcon, SunIcon } from "@chakra-ui/icons";
 import theme from '../../theme'; // Import custom theme
+import { fetchProfile, logout_dp } from "../../store/userSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../store";
 
 const IconLogo = lazy(() => import("../../components/LogoIcon"));
 
@@ -23,14 +26,23 @@ const MainLayout = () => {
     ];
 
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const user = useSelector((state: RootState) => state.user.loggedInUser);
 
     const logout = () => {
-        /* logout */
+        localStorage.removeItem('token');
+        dispatch(logout_dp());
+        navigate("/login");
     };
+
+    useEffect(() => {
+        dispatch(fetchProfile() as any);
+
+    }, []);
 
     return (
         <Flex direction="row" height="100vh">
-            <Box as="nav" width="200px" bg={navBg} color={navColor} p="5">
+            <Box as="nav" width="200px" bg={navBg} color={navColor} p="5" height="100%" overflowY="auto">
                 <Flex align="center" mb="5">
                     <Suspense fallback={<div>Loading...</div>}>
                         <IconLogo />
@@ -45,7 +57,7 @@ const MainLayout = () => {
                     ))}
                 </VStack>
             </Box>
-            <Box flex="1" bg={contentBg} position="relative">
+            <Box flex="1" bg={contentBg} position="relative" height="100vh">
                 <IconButton
                     aria-label="Toggle Color Mode"
                     icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
@@ -58,7 +70,7 @@ const MainLayout = () => {
                     <MenuButton
                         as={Avatar}
                         aria-label="Options"
-                        src="https://bit.ly/dan-abramov"
+                        src={user?.avatar}
                         size="sm"
                         position="fixed"
                         right="20px"

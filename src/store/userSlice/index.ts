@@ -1,19 +1,38 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { User } from '../../types';
+import axiosInstance from '../../requests/axios';
 
 interface UserState {
   loggedInUser: User | null;
 }
 
 const initialState: UserState = {
-  loggedInUser: {
-    id: 8,
-    email: 'example@example.com',
-    name: 'John Doe',
-    password: 'password123',
-    avatar: 'https://eu.ui-avatars.com/api/?name=John Doe&rounded=true&background=random&width=250&height=250'
-  },
+  loggedInUser: null,
 };
+
+export const fetchProfile = createAsyncThunk(
+  'user/fetchProfile',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get('/auth/profile');
+      return response.data;
+    } catch (error) {
+      return rejectWithValue('Failed to fetch profile');
+    }
+  }
+);
+
+export const updateUser = createAsyncThunk(
+  'user/updateUser',
+  async (user: User, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.put('/auth/profile', user);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue('Failed to update user');
+    }
+  }
+);
 
 const userSlice = createSlice({
   name: 'user',
@@ -22,11 +41,19 @@ const userSlice = createSlice({
     login(state, action: PayloadAction<User>) {
       state.loggedInUser = action.payload;
     },
-    logout(state) {
+    logout_dp(state) {
       state.loggedInUser = null;
     },
   },
+  extraReducers: (builder) => {
+    builder.addCase(fetchProfile.fulfilled, (state, action) => {
+      state.loggedInUser = action.payload;
+    });
+    builder.addCase(fetchProfile.rejected, (_, action) => {
+      console.error('Fetch profile failed:', action.payload);
+    });
+  },
 });
 
-export const { login, logout } = userSlice.actions;
+export const { login, logout_dp } = userSlice.actions;
 export default userSlice.reducer;

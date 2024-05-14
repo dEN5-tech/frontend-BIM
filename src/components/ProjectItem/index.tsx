@@ -15,7 +15,7 @@ const ProjectItem = ({ project }: { project: Project }) => {
 
   return (
     <Box
-      width={{ base: "100%", sm: "300px", md: "250px", xl: "350px" }}
+      width={{ base: "100%", sm: "100%", md: "100%", xl: "100%" }}
       border="1px solid"
       borderColor="gray.200"
       rounded="md"
@@ -24,16 +24,14 @@ const ProjectItem = ({ project }: { project: Project }) => {
       bgSize="cover"
       bgPos="center"
       overflow="hidden"
-      sx={{
-        transition: 'all 0.3s ease-in-out',
-        _hover: {
-          transform: 'scale(1.05)',
-        },
-      }}
+      transition="transform 0.3s ease-in-out"
+      _hover={{ transform: 'scale(1.05)' }}
     >
-      <VStack spacing={4} height="100%" justifyContent="end">
-        <Text color={textColor} fontSize="lg" fontWeight="bold" bg="rgba(0, 0, 0, 0.5)" p={2} rounded="md">{project.name}</Text>
-        <Text color={textColor} bg="rgba(0, 0, 0, 0.5)" p={2} rounded="md">
+      <VStack spacing={4} height="100%" justifyContent="flex-end">
+        <Text color={textColor} fontSize="lg" fontWeight="bold" bg="rgba(0, 0, 0, 0.5)" p={2} rounded="md" textAlign="center">
+          {project.name}
+        </Text>
+        <Text color={textColor} bg="rgba(0, 0, 0, 0.5)" p={2} rounded="md" textAlign="center">
           {project.description}
         </Text>
         <IconButton
@@ -41,7 +39,7 @@ const ProjectItem = ({ project }: { project: Project }) => {
           icon={<MdArrowRight size="30px" />}
           onClick={() => navigate(`/projects/${project.id}`)}
           variant="ghost"
-          colorScheme="teal" // Added color scheme for better visibility
+          colorScheme="teal"
           rounded="full"
         />
       </VStack>

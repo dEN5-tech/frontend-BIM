@@ -40,3 +40,11 @@ export interface DTOAxiosResponse {
     users: UserDTO[];
     messages: MessageDTO[];
 }
+
+
+export interface Event {
+  title: string;
+  date: string;
+  description: string;
+  participants: { name: string; avatar: string }[];
+}
